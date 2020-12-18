@@ -19,7 +19,7 @@ app.use((req, res, next) => {
 
 app.get('/', async (req, res) => {
 	const topTenRec = await Recipe.findAll({
-		limit: 10,
+		limit: 5,
 		order: [['likes', 'DESC']]
 	});
 	res.json(topTenRec);
@@ -46,6 +46,7 @@ app.post('/', async (req, res) => {
 
 		const updated = recipe.likes ? await foundRecipe.increment('likes') :
 			await foundRecipe.decrement('likes');
+		!updated.likes && updated.destroy();
 		return res.json(updated);
 	} else {
 		recipe.likes = 1;
