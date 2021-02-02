@@ -1,5 +1,5 @@
-const { db, Recipe } = require('./models');
-const app = require('./app.js');
+import { db }  from './models';
+import app from './app.js';
 
 const force = false;
 db.sync({ force })

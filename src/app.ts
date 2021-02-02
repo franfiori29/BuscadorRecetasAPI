@@ -1,12 +1,8 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const app = express();
-const { Recipe } = require('./models/index');
+import express, { Application, Request, Response } from 'express';
+import { Recipe } from './models/index';
+const app: Application = express();
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json({ extended: false }));
-
-app.use((req, res, next) => {
+app.use((_:Request, res:Response, next) => {
 	res.header('Access-Control-Allow-Origin', '*'); // update to match the domain you will make the request from
 	res.header('Access-Control-Allow-Credentials', 'true');
 	res.header(
@@ -17,7 +13,7 @@ app.use((req, res, next) => {
 	next();
 });
 
-app.get('/', async (req, res) => {
+app.get('/', async (_:Request, res:Response) => {
 	const topTenRec = await Recipe.findAll({
 		limit: 5,
 		order: [['likes', 'DESC']]
@@ -25,13 +21,13 @@ app.get('/', async (req, res) => {
 	res.json(topTenRec);
 });
 
-app.get('/:id', async (req, res) => {
+app.get('/:id', async (req:Request, res:Response) => {
 	const { id } = req.params;
 	const recipe = await Recipe.findOne({ where: { id } });
 	return res.json(recipe ? recipe.likes : 0);
 });
 
-app.post('/', async (req, res) => {
+app.post('/', async (req:Request, res:Response) => {
 	const recipe = req.body;
 	const foundRecipe = await Recipe.findOne({
 		where: {
@@ -55,4 +51,4 @@ app.post('/', async (req, res) => {
 	}
 })
 
-module.exports = app;
+export default app;
