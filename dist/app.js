@@ -13,41 +13,45 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const body_parser_1 = __importDefault(require("body-parser"));
 const index_1 = require("./models/index");
 const app = express_1.default();
+app.use(body_parser_1.default.urlencoded({ extended: true, limit: "50mb" }));
+app.use(body_parser_1.default.json({ limit: "50mb" }));
 app.use((_, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Credentials', 'true');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Credentials", "true");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
     next();
 });
-app.get('/', (_, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.get("/", (_, res) => __awaiter(void 0, void 0, void 0, function* () {
     const topTenRec = yield index_1.Recipe.findAll({
         limit: 5,
-        order: [['likes', 'DESC']]
+        order: [["likes", "DESC"]],
     });
     res.json(topTenRec);
 }));
-app.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const recipe = yield index_1.Recipe.findOne({ where: { id } });
     return res.json(recipe ? recipe.likes : 0);
 }));
-app.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const recipe = req.body;
     const foundRecipe = yield index_1.Recipe.findOne({
         where: {
-            id: recipe.id
-        }
+            id: recipe.id,
+        },
     });
     if (foundRecipe) {
         if (!foundRecipe.likes && !recipe.likes) {
             foundRecipe.destroy();
             return res.json({});
         }
-        const updated = recipe.likes ? yield foundRecipe.increment('likes') :
-            yield foundRecipe.decrement('likes');
+        const updated = recipe.likes
+            ? yield foundRecipe.increment("likes")
+            : yield foundRecipe.decrement("likes");
         !updated.likes && updated.destroy();
         return res.json(updated);
     }
