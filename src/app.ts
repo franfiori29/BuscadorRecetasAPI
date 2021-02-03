@@ -17,11 +17,11 @@ app.use((_: Request, res: Response, next) => {
 });
 
 app.get("/", async (_: Request, res: Response) => {
-	const topTenRec = await Recipe.findAll({
-		limit: 5,
+	const topThreeRec = await Recipe.findAll({
+		limit: 3,
 		order: [["likes", "DESC"]],
 	});
-	res.json(topTenRec);
+	res.json(topThreeRec);
 });
 
 app.get("/:id", async (req: Request, res: Response) => {

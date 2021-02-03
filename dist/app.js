@@ -26,11 +26,11 @@ app.use((_, res, next) => {
     next();
 });
 app.get("/", (_, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const topTenRec = yield index_1.Recipe.findAll({
-        limit: 5,
+    const topThreeRec = yield index_1.Recipe.findAll({
+        limit: 3,
         order: [["likes", "DESC"]],
     });
-    res.json(topTenRec);
+    res.json(topThreeRec);
 }));
 app.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
